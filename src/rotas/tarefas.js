@@ -36,6 +36,12 @@ function lerDados(corpo) {
   };
 }
 
+function aplicarRegras(nova, atual) {
+  if (nova.status === 'Em Andamento' && !nova.usuario_id) {
+    throw invalido('Atribua um responsável antes de iniciar a tarefa.');
+  }
+}
+
 function dataConclusao(nova, atual) {
   if (nova.status !== 'Concluída') return null;
   if (atual?.status === 'Concluída') return atual.concluida_em;
@@ -44,6 +50,7 @@ function dataConclusao(nova, atual) {
 
 function atualizar(atual, nova) {
   conferirRelacionamentos(nova);
+  aplicarRegras(nova, atual);
   banco
     .prepare(`UPDATE tarefas SET titulo = ?, descricao = ?, status = ?, prazo = ?,
               usuario_id = ?, categoria_id = ?, concluida_em = ? WHERE id = ?`)
@@ -65,6 +72,7 @@ rotas.get('/:id', (req, res) => {
 rotas.post('/', (req, res) => {
   const nova = lerDados(req.body ?? {});
   conferirRelacionamentos(nova);
+  aplicarRegras(nova, null);
   const { lastInsertRowid } = banco
     .prepare(`INSERT INTO tarefas (titulo, descricao, status, prazo, usuario_id, categoria_id, concluida_em)
               VALUES (?, ?, ?, ?, ?, ?, ?)`)
@@ -82,6 +90,23 @@ rotas.delete('/:id', (req, res) => {
   const tarefa = buscarTarefa(v.idDaRota(req));
   banco.prepare('DELETE FROM tarefas WHERE id = ?').run(tarefa.id);
   res.status(204).end();
+});
+
+rotas.patch('/:id/atribuir', (req, res) => {
+  const atual = buscarTarefa(v.idDaRota(req));
+  const usuarioId = v.idOpcional(req.body?.usuario_id, 'usuario_id');
+  if (!usuarioId) throw invalido('Informe o "usuario_id".');
+  res.json(atualizar(atual, { ...atual, usuario_id: usuarioId }));
+});
+
+rotas.patch('/:id/iniciar', (req, res) => {
+  const atual = buscarTarefa(v.idDaRota(req));
+  res.json(atualizar(atual, { ...atual, status: 'Em Andamento' }));
+});
+
+rotas.patch('/:id/concluir', (req, res) => {
+  const atual = buscarTarefa(v.idDaRota(req));
+  res.json(atualizar(atual, { ...atual, status: 'Concluída' }));
 });
 
 module.exports = rotas;
