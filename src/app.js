@@ -13,6 +13,7 @@ app.get('/', (req, res) => {
 
 app.use('/usuarios', require('./rotas/usuarios'));
 app.use('/categorias', require('./rotas/categorias'));
+app.use('/tarefas', require('./rotas/tarefas'));
 
 app.use((req, res) => {
   res.status(404).json({ erro: 'Rota não encontrada.' });
