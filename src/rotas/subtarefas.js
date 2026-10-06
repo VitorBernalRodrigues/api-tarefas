@@ -1,6 +1,6 @@
 const { Router } = require('express');
 const banco = require('../banco');
-const { naoEncontrado, invalido } = require('../erros');
+const { naoEncontrado, invalido, regraViolada } = require('../erros');
 const v = require('../validacao');
 
 const rotas = Router();
@@ -30,6 +30,13 @@ function lerDados(corpo) {
   };
 }
 
+function conferirTarefaMae(dados) {
+  const tarefa = buscarTarefaMae(dados.tarefa_id);
+  if (tarefa.status === 'Concluída' && !dados.concluida) {
+    throw regraViolada('A tarefa já está concluída: reabra-a antes de adicionar subtarefas pendentes.');
+  }
+}
+
 rotas.get('/', (req, res) => {
   if (req.query.tarefa_id) {
     const tarefaId = v.idOpcional(req.query.tarefa_id, 'tarefa_id');
@@ -44,6 +51,7 @@ rotas.get('/:id', (req, res) => {
 
 rotas.post('/', (req, res) => {
   const dados = lerDados(req.body ?? {});
+  conferirTarefaMae(dados);
   const { lastInsertRowid } = banco
     .prepare('INSERT INTO subtarefas (tarefa_id, titulo, concluida) VALUES (?, ?, ?)')
     .run(dados.tarefa_id, dados.titulo, dados.concluida);
@@ -54,6 +62,7 @@ rotas.put('/:id', (req, res) => {
   const id = v.idDaRota(req);
   buscarSubtarefa(id);
   const dados = lerDados(req.body ?? {});
+  conferirTarefaMae(dados);
   banco
     .prepare('UPDATE subtarefas SET tarefa_id = ?, titulo = ?, concluida = ? WHERE id = ?')
     .run(dados.tarefa_id, dados.titulo, dados.concluida, id);

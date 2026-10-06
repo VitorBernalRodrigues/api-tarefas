@@ -50,6 +50,10 @@ function aplicarRegras(nova, atual) {
       regras.verificarLimiteEmAndamento(nova.usuario_id, atual?.id ?? 0);
     }
   }
+
+  if (nova.status === 'Concluída' && atual && atual.status !== 'Concluída') {
+    regras.verificarSubtarefasConcluidas(atual.id);
+  }
 }
 
 function dataConclusao(nova, atual) {

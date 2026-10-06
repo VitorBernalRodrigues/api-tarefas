@@ -33,9 +33,22 @@ function verificarUsuarioSemAtraso(usuarioId) {
   }
 }
 
+function verificarSubtarefasConcluidas(tarefaId) {
+  const { total } = banco
+    .prepare('SELECT COUNT(*) AS total FROM subtarefas WHERE tarefa_id = ? AND concluida = 0')
+    .get(tarefaId);
+
+  if (total > 0) {
+    throw regraViolada(
+      `A tarefa não pode ser concluída: há ${total} subtarefa(s) pendente(s).`
+    );
+  }
+}
+
 module.exports = {
   LIMITE_EM_ANDAMENTO,
   hoje,
   verificarLimiteEmAndamento,
   verificarUsuarioSemAtraso,
+  verificarSubtarefasConcluidas,
 };
