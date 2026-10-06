@@ -2,6 +2,7 @@ const { Router } = require('express');
 const banco = require('../banco');
 const { naoEncontrado, invalido } = require('../erros');
 const v = require('../validacao');
+const regras = require('../regras');
 
 const rotas = Router();
 const STATUS_VALIDOS = ['Pendente', 'Em Andamento', 'Concluída'];
@@ -37,8 +38,13 @@ function lerDados(corpo) {
 }
 
 function aplicarRegras(nova, atual) {
-  if (nova.status === 'Em Andamento' && !nova.usuario_id) {
-    throw invalido('Atribua um responsável antes de iniciar a tarefa.');
+  const mudouResponsavel = nova.usuario_id && nova.usuario_id !== atual?.usuario_id;
+
+  if (nova.status === 'Em Andamento') {
+    if (!nova.usuario_id) throw invalido('Atribua um responsável antes de iniciar a tarefa.');
+    if (atual?.status !== 'Em Andamento' || mudouResponsavel) {
+      regras.verificarLimiteEmAndamento(nova.usuario_id, atual?.id ?? 0);
+    }
   }
 }
 
