@@ -58,6 +58,7 @@ rotas.get('/', (req, res) => {
 
 rotas.get('/:id', (req, res) => {
   const tarefa = buscarTarefa(v.idDaRota(req));
+  tarefa.subtarefas = banco.prepare('SELECT * FROM subtarefas WHERE tarefa_id = ?').all(tarefa.id);
   res.json(tarefa);
 });
 
