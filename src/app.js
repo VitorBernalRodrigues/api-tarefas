@@ -11,6 +11,8 @@ app.get('/', (req, res) => {
   });
 });
 
+app.use('/usuarios', require('./rotas/usuarios'));
+
 app.use((req, res) => {
   res.status(404).json({ erro: 'Rota não encontrada.' });
 });
