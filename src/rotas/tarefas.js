@@ -40,6 +40,10 @@ function lerDados(corpo) {
 function aplicarRegras(nova, atual) {
   const mudouResponsavel = nova.usuario_id && nova.usuario_id !== atual?.usuario_id;
 
+  if (mudouResponsavel) {
+    regras.verificarUsuarioSemAtraso(nova.usuario_id);
+  }
+
   if (nova.status === 'Em Andamento') {
     if (!nova.usuario_id) throw invalido('Atribua um responsável antes de iniciar a tarefa.');
     if (atual?.status !== 'Em Andamento' || mudouResponsavel) {
