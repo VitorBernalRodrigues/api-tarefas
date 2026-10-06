@@ -74,7 +74,26 @@ function atualizar(atual, nova) {
 }
 
 rotas.get('/', (req, res) => {
-  res.json(banco.prepare('SELECT * FROM tarefas ORDER BY prazo IS NULL, prazo').all());
+  const condicoes = [];
+  const valores = [];
+  if (req.query.status) {
+    condicoes.push('status = ?');
+    valores.push(req.query.status);
+  }
+  if (req.query.usuario_id) {
+    condicoes.push('usuario_id = ?');
+    valores.push(v.idOpcional(req.query.usuario_id, 'usuario_id'));
+  }
+  if (req.query.categoria_id) {
+    condicoes.push('categoria_id = ?');
+    valores.push(v.idOpcional(req.query.categoria_id, 'categoria_id'));
+  }
+  if (req.query.atrasadas === 'true') {
+    condicoes.push("status <> 'Concluída' AND prazo < ?");
+    valores.push(regras.hoje());
+  }
+  const where = condicoes.length ? 'WHERE ' + condicoes.join(' AND ') : '';
+  res.json(banco.prepare(`SELECT * FROM tarefas ${where} ORDER BY prazo IS NULL, prazo`).all(...valores));
 });
 
 rotas.get('/:id', (req, res) => {
