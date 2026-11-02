@@ -1,5 +1,5 @@
 const express = require('express');
-const { ErroHttp } = require('./erros');
+const { ErroHttp } = require('./utils/erros');
 
 const app = express();
 app.use(express.json());

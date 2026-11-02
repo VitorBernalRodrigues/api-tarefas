@@ -1,5 +1,5 @@
-const banco = require('./banco');
-const { regraViolada } = require('./erros');
+const banco = require('../config/banco');
+const { regraViolada } = require('../utils/erros');
 
 const LIMITE_EM_ANDAMENTO = 3;
 
