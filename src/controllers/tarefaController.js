@@ -1,11 +1,11 @@
-const Tarefa = require('../models/tarefaModel');
-const Usuario = require('../models/usuarioModel');
-const Categoria = require('../models/categoriaModel');
-const Subtarefa = require('../models/subtarefaModel');
-const regras = require('../models/regras');
-const tarefaView = require('../views/tarefaView');
-const { naoEncontrado, invalido } = require('../utils/erros');
-const v = require('../utils/validacao');
+import * as Tarefa from '../models/tarefaModel.js';
+import * as Usuario from '../models/usuarioModel.js';
+import * as Categoria from '../models/categoriaModel.js';
+import * as Subtarefa from '../models/subtarefaModel.js';
+import * as regras from '../models/regras.js';
+import * as tarefaView from '../views/tarefaView.js';
+import { naoEncontrado, invalido } from '../utils/erros.js';
+import * as v from '../utils/validacao.js';
 
 const STATUS_VALIDOS = ['Pendente', 'Em Andamento', 'Concluída'];
 
@@ -129,4 +129,4 @@ function concluir(req, res) {
   res.json(salvarAlteracoes(atual, { ...atual, status: 'Concluída' }));
 }
 
-module.exports = { listar, buscar, criar, atualizar, remover, atribuir, iniciar, concluir };
+export { listar, buscar, criar, atualizar, remover, atribuir, iniciar, concluir };

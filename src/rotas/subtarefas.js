@@ -1,5 +1,5 @@
-const { Router } = require('express');
-const controller = require('../controllers/subtarefaController');
+import { Router } from 'express';
+import * as controller from '../controllers/subtarefaController.js';
 
 const rotas = Router();
 
@@ -10,4 +10,4 @@ rotas.put('/:id', controller.atualizar);
 rotas.patch('/:id/concluir', controller.concluir);
 rotas.delete('/:id', controller.remover);
 
-module.exports = rotas;
+export default rotas;

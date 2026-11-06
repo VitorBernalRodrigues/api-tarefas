@@ -1,7 +1,7 @@
-const Subtarefa = require('../models/subtarefaModel');
-const Tarefa = require('../models/tarefaModel');
-const { naoEncontrado, invalido, regraViolada } = require('../utils/erros');
-const v = require('../utils/validacao');
+import * as Subtarefa from '../models/subtarefaModel.js';
+import * as Tarefa from '../models/tarefaModel.js';
+import { naoEncontrado, invalido, regraViolada } from '../utils/erros.js';
+import * as v from '../utils/validacao.js';
 
 function buscarSubtarefa(id) {
   const subtarefa = Subtarefa.buscarPorId(id);
@@ -77,4 +77,4 @@ function remover(req, res) {
   res.status(204).end();
 }
 
-module.exports = { listar, buscar, criar, atualizar, concluir, remover };
+export { listar, buscar, criar, atualizar, concluir, remover };

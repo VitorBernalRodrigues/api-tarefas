@@ -1,5 +1,5 @@
-const banco = require('../config/banco');
-const { hoje } = require('./regras');
+import * as banco from '../config/banco.js';
+import { hoje } from './regras.js';
 
 function listar(filtros) {
   const condicoes = [];
@@ -55,4 +55,4 @@ function remover(id) {
   banco.prepare('DELETE FROM tarefas WHERE id = ?').run(id);
 }
 
-module.exports = { listar, listarPorUsuario, buscarPorId, criar, atualizar, remover };
+export { listar, listarPorUsuario, buscarPorId, criar, atualizar, remover };

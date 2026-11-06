@@ -1,4 +1,4 @@
-const banco = require('../config/banco');
+import * as banco from '../config/banco.js';
 
 function listar() {
   return banco.prepare('SELECT * FROM categorias ORDER BY nome').all();
@@ -27,4 +27,4 @@ function remover(id) {
   banco.prepare('DELETE FROM categorias WHERE id = ?').run(id);
 }
 
-module.exports = { listar, buscarPorId, existe, criar, atualizar, remover };
+export { listar, buscarPorId, existe, criar, atualizar, remover };

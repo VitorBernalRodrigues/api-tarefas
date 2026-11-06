@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "API REST para gerenciamento de tarefas e produtividade de equipes",
   "main": "src/server.js",
-  "type": "commonjs",
+  "type": "module",
  "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "db:up": "docker start api-tarefas || docker run -d --name api-tarefas -p 127.0.0.1:27017:27017 -v api-tarefas-data:/data/db mongo:8",

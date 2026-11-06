@@ -1,4 +1,4 @@
-const banco = require('../config/banco');
+import * as banco from '../config/banco.js';
 
 function listar() {
   return banco.prepare('SELECT * FROM subtarefas').all();
@@ -33,4 +33,4 @@ function remover(id) {
   banco.prepare('DELETE FROM subtarefas WHERE id = ?').run(id);
 }
 
-module.exports = { listar, listarPorTarefa, buscarPorId, criar, atualizar, concluir, remover };
+export { listar, listarPorTarefa, buscarPorId, criar, atualizar, concluir, remover };

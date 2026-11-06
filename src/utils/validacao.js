@@ -1,4 +1,4 @@
-const { invalido } = require('./erros');
+import { invalido } from './erros.js';
 
 function textoObrigatorio(valor, campo) {
   if (typeof valor !== 'string' || valor.trim() === '') {
@@ -35,4 +35,4 @@ function idDaRota(req) {
   return idOpcional(req.params.id, 'id');
 }
 
-module.exports = { textoObrigatorio, textoOpcional, idOpcional, dataOpcional, idDaRota };
+export { textoObrigatorio, textoOpcional, idOpcional, dataOpcional, idDaRota };

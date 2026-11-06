@@ -3,4 +3,4 @@ function detalhe(tarefa, subtarefas) {
   return tarefa;
 }
 
-module.exports = { detalhe };
+export { detalhe };

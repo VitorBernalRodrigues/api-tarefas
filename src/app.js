@@ -1,5 +1,9 @@
-const express = require('express');
-const { ErroHttp } = require('./utils/erros');
+import express from 'express';
+import { ErroHttp } from './utils/erros.js';
+import usuarios from './rotas/usuarios.js';
+import categorias from './rotas/categorias.js';
+import tarefas from './rotas/tarefas.js';
+import subtarefas from './rotas/subtarefas.js';
 
 const app = express();
 app.use(express.json());
@@ -11,10 +15,10 @@ app.get('/', (req, res) => {
   });
 });
 
-app.use('/usuarios', require('./rotas/usuarios'));
-app.use('/categorias', require('./rotas/categorias'));
-app.use('/tarefas', require('./rotas/tarefas'));
-app.use('/subtarefas', require('./rotas/subtarefas'));
+app.use('/usuarios', usuarios);
+app.use('/categorias', categorias);
+app.use('/tarefas', tarefas);
+app.use('/subtarefas', subtarefas);
 
 app.use((req, res) => {
   res.status(404).json({ erro: 'Rota não encontrada.' });
@@ -34,4 +38,4 @@ app.use((erro, req, res, next) => {
   res.status(500).json({ erro: 'Erro interno do servidor.' });
 });
 
-module.exports = app;
+export default app;

@@ -1,5 +1,5 @@
-const { Router } = require('express');
-const controller = require('../controllers/usuarioController');
+import { Router } from 'express';
+import * as controller from '../controllers/usuarioController.js';
 
 const rotas = Router();
 
@@ -10,4 +10,4 @@ rotas.put('/:id', controller.atualizar);
 rotas.delete('/:id', controller.remover);
 rotas.get('/:id/historico', controller.historico);
 
-module.exports = rotas;
+export default rotas;

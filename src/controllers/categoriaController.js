@@ -1,6 +1,6 @@
-const Categoria = require('../models/categoriaModel');
-const { naoEncontrado } = require('../utils/erros');
-const { textoObrigatorio, textoOpcional, idDaRota } = require('../utils/validacao');
+import * as Categoria from '../models/categoriaModel.js';
+import { naoEncontrado } from '../utils/erros.js';
+import { textoObrigatorio, textoOpcional, idDaRota } from '../utils/validacao.js';
 
 function buscarCategoria(id) {
   const categoria = Categoria.buscarPorId(id);
@@ -42,4 +42,4 @@ function remover(req, res) {
   res.status(204).end();
 }
 
-module.exports = { listar, buscar, criar, atualizar, remover };
+export { listar, buscar, criar, atualizar, remover };

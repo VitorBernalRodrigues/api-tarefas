@@ -1,5 +1,5 @@
-const { Router } = require('express');
-const controller = require('../controllers/categoriaController');
+import { Router } from 'express';
+import * as controller from '../controllers/categoriaController.js';
 
 const rotas = Router();
 
@@ -9,4 +9,4 @@ rotas.post('/', controller.criar);
 rotas.put('/:id', controller.atualizar);
 rotas.delete('/:id', controller.remover);
 
-module.exports = rotas;
+export default rotas;

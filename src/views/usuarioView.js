@@ -20,4 +20,4 @@ function historico(usuario, tarefas, dataHoje) {
   };
 }
 
-module.exports = { historico };
+export { historico };

@@ -1,9 +1,9 @@
-const Usuario = require('../models/usuarioModel');
-const Tarefa = require('../models/tarefaModel');
-const usuarioView = require('../views/usuarioView');
-const { naoEncontrado, invalido } = require('../utils/erros');
-const { textoObrigatorio, idDaRota } = require('../utils/validacao');
-const { hoje } = require('../models/regras');
+import * as Usuario from '../models/usuarioModel.js';
+import * as Tarefa from '../models/tarefaModel.js';
+import * as usuarioView from '../views/usuarioView.js';
+import { naoEncontrado, invalido } from '../utils/erros.js';
+import { textoObrigatorio, idDaRota } from '../utils/validacao.js';
+import { hoje } from '../models/regras.js';
 
 function buscarUsuario(id) {
   const usuario = Usuario.buscarPorId(id);
@@ -51,4 +51,4 @@ function historico(req, res) {
   res.json(usuarioView.historico(usuario, tarefas, hoje()));
 }
 
-module.exports = { listar, buscar, criar, atualizar, remover, historico };
+export { listar, buscar, criar, atualizar, remover, historico };

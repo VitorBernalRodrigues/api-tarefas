@@ -1,5 +1,5 @@
-const banco = require('../config/banco');
-const { regraViolada } = require('../utils/erros');
+import * as banco from '../config/banco.js';
+import { regraViolada } from '../utils/erros.js';
 
 const LIMITE_EM_ANDAMENTO = 3;
 
@@ -45,7 +45,7 @@ function verificarSubtarefasConcluidas(tarefaId) {
   }
 }
 
-module.exports = {
+export {
   LIMITE_EM_ANDAMENTO,
   hoje,
   verificarLimiteEmAndamento,
