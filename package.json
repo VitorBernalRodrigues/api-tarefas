@@ -4,9 +4,15 @@
   "description": "API REST para gerenciamento de tarefas e produtividade de equipes",
   "main": "src/server.js",
   "type": "commonjs",
-  "scripts": {
-    "start": "node src/server.js",
-    "dev": "node --watch src/server.js"
+ "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "db:up": "docker start api-tarefas || docker run -d --name api-tarefas -p 127.0.0.1:27017:27017 -v api-tarefas-data:/data/db mongo:8",
+    "db:down": "docker stop api-tarefas",
+    "db:logs": "docker logs -f api-tarefas",
+    "db:reset": "docker rm -f api-tarefas; docker volume rm api-tarefas-data",
+    "predev": "npm run db:up",
+    "dev": "node --watch src/server.js",
+    "start": "node src/server.js"
   },
   "engines": {
     "node": ">=22.13"
