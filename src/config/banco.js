@@ -1,42 +1,29 @@
-const { DatabaseSync } = require('node:sqlite');
+import { MongoClient } from 'mongodb';
 
-const banco = new DatabaseSync(process.env.DB_ARQUIVO || 'dados.db');
+let client;
+let db;
 
-banco.exec('PRAGMA foreign_keys = ON');
+export async function conectar() {
+  const uri = process.env.MONGODB_URI;
+  const nomeDoBanco = process.env.MONGODB_DB_NAME;
 
-banco.exec(`
-  CREATE TABLE IF NOT EXISTS usuarios (
-    id        INTEGER PRIMARY KEY AUTOINCREMENT,
-    nome      TEXT NOT NULL,
-    email     TEXT NOT NULL UNIQUE,
-    criado_em TEXT NOT NULL DEFAULT (datetime('now', 'localtime'))
-  );
+  if (!uri || !nomeDoBanco) {
+    throw new Error('Defina MONGODB_URI e MONGODB_DB_NAME no arquivo .env.');
+  }
 
-  CREATE TABLE IF NOT EXISTS categorias (
-    id        INTEGER PRIMARY KEY AUTOINCREMENT,
-    nome      TEXT NOT NULL UNIQUE,
-    descricao TEXT
-  );
+  client = new MongoClient(uri);
+  await client.connect();
+  db = client.db(nomeDoBanco);
+  return db;
+}
 
-  CREATE TABLE IF NOT EXISTS tarefas (
-    id           INTEGER PRIMARY KEY AUTOINCREMENT,
-    titulo       TEXT NOT NULL,
-    descricao    TEXT,
-    status       TEXT NOT NULL DEFAULT 'Pendente'
-                 CHECK (status IN ('Pendente', 'Em Andamento', 'Concluída')),
-    prazo        TEXT,
-    usuario_id   INTEGER REFERENCES usuarios(id) ON DELETE SET NULL,
-    categoria_id INTEGER REFERENCES categorias(id) ON DELETE SET NULL,
-    criado_em    TEXT NOT NULL DEFAULT (datetime('now', 'localtime')),
-    concluida_em TEXT
-  );
+// Retorna o banco conectado. Os models usam esta função para acessar as coleções.
+export function obterBanco() {
+  return db;
+}
 
-  CREATE TABLE IF NOT EXISTS subtarefas (
-    id        INTEGER PRIMARY KEY AUTOINCREMENT,
-    tarefa_id INTEGER NOT NULL REFERENCES tarefas(id) ON DELETE CASCADE,
-    titulo    TEXT NOT NULL,
-    concluida INTEGER NOT NULL DEFAULT 0 CHECK (concluida IN (0, 1))
-  );
-`);
-
-module.exports = banco;
+export async function desconectar() {
+  if (client) {
+    await client.close();
+  }
+}
