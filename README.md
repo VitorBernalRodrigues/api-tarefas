@@ -1,6 +1,6 @@
 # API de Gerenciamento de Tarefas
 
-API REST para gerenciamento de tarefas e produtividade de equipes, feita com Node.js, Express e SQLite.
+API REST para gerenciamento de tarefas e produtividade de equipes, feita com Node.js, Express e MongoDB.
 
 **Turma:** 6B
 
@@ -13,6 +13,7 @@ API REST para gerenciamento de tarefas e produtividade de equipes, feita com Nod
 ## Requisitos
 
 - Node.js 22.13 ou superior
+- Docker (para subir o MongoDB)
 
 ## Como rodar
 
@@ -20,24 +21,49 @@ API REST para gerenciamento de tarefas e produtividade de equipes, feita com Nod
 git clone https://github.com/VitorBernalRodrigues/api-tarefas.git
 cd api-tarefas
 npm install
-npm start
+cp .env.example .env
+npm run dev
 ```
 
-A API fica disponível em `http://localhost:3333`. O banco `dados.db` é criado automaticamente na primeira execução.
+O `npm run dev` executa antes o `npm run db:up`, que inicia (ou cria) o container `api-tarefas` com o MongoDB 8 na porta `27017`. A API fica disponível em `http://localhost:3333`.
+
+### Variáveis de ambiente (`.env`)
+
+| Variável          | Exemplo                     | Descrição                 |
+| ----------------- | --------------------------- | ------------------------- |
+| `PORT`            | `3333`                      | Porta da API              |
+| `MONGODB_URI`     | `mongodb://localhost:27017` | Endereço do MongoDB       |
+| `MONGODB_DB_NAME` | `api_tarefas`               | Nome do banco de dados    |
+
+### Scripts
+
+| Script             | Descrição                                        |
+| ------------------ | ------------------------------------------------ |
+| `npm run dev`      | Sobe o MongoDB e inicia a API com `--watch`      |
+| `npm start`        | Inicia a API (o MongoDB já deve estar rodando)   |
+| `npm run db:up`    | Inicia ou cria o container do MongoDB            |
+| `npm run db:down`  | Para o container                                 |
+| `npm run db:logs`  | Mostra os logs do container                      |
+| `npm run db:reset` | Remove o container e o volume com os dados       |
 
 ## Estrutura
 
 ```
 src/
-├── config/        conexão com o banco
-├── models/        acesso ao banco e regras de negócio
-├── views/         montagem das respostas
-├── controllers/   tratamento das requisições
+├── config/        conexão com o MongoDB
 ├── rotas/         definição das rotas
-├── utils/         erros e validações
+├── controllers/   recebem a requisição e devolvem a resposta
+├── services/      validações e regras de negócio
+├── models/        acesso ao MongoDB (inserir, buscarTodas, buscarPorId, atualizar, remover)
+├── views/         montagem das respostas compostas
+├── utils/         erros, validações e formato dos documentos
 ├── app.js
 └── server.js
 ```
+
+Fluxo de uma requisição: `rotas -> controllers -> services -> models`.
+
+Os ids são `ObjectId` do MongoDB, expostos na API como texto de 24 caracteres (ex.: `"65f1c2a9e4b0a1b2c3d4e5f6"`).
 
 ## Rotas
 
@@ -91,8 +117,8 @@ Filtros da listagem: `status`, `usuario_id`, `categoria_id` e `atrasadas=true`.
   "descricao": "Formulário com e-mail e senha",
   "status": "Pendente",
   "prazo": "2026-12-15",
-  "usuario_id": 1,
-  "categoria_id": 1
+  "usuario_id": "65f1c2a9e4b0a1b2c3d4e5f6",
+  "categoria_id": "65f1c2a9e4b0a1b2c3d4e5f7"
 }
 ```
 
@@ -110,5 +136,5 @@ Filtros da listagem: `status`, `usuario_id`, `categoria_id` e `atrasadas=true`.
 Filtro da listagem: `tarefa_id`.
 
 ```json
-{ "tarefa_id": 1, "titulo": "Validar formato do e-mail", "concluida": false }
+{ "tarefa_id": "65f1c2a9e4b0a1b2c3d4e5f8", "titulo": "Validar formato do e-mail", "concluida": false }
 ```
