@@ -7,6 +7,7 @@ class ErroHttp extends Error {
 
 const naoEncontrado = (o_que) => new ErroHttp(404, `${o_que} não encontrado(a).`);
 const invalido = (mensagem) => new ErroHttp(400, mensagem);
+const conflito = (mensagem) => new ErroHttp(409, mensagem);
 const regraViolada = (mensagem) => new ErroHttp(422, mensagem);
 
-export { ErroHttp, naoEncontrado, invalido, regraViolada };
+export { ErroHttp, naoEncontrado, invalido, conflito, regraViolada };

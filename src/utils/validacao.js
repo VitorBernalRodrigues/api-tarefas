@@ -15,11 +15,10 @@ function textoOpcional(valor, campo) {
 
 function idOpcional(valor, campo) {
   if (valor === undefined || valor === null) return null;
-  const numero = Number(valor);
-  if (!Number.isInteger(numero) || numero <= 0) {
+  if (typeof valor !== 'string' || !/^[0-9a-f]{24}$/i.test(valor)) {
     throw invalido(`O campo "${campo}" deve ser um id válido.`);
   }
-  return numero;
+  return valor.toLowerCase();
 }
 
 function dataOpcional(valor, campo) {
