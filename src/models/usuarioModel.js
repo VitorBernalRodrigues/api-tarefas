@@ -1,30 +1,32 @@
-import * as banco from '../config/banco.js';
+import { ObjectId } from 'mongodb';
+import { obterBanco } from '../config/banco.js';
 
-function listar() {
-  return banco.prepare('SELECT * FROM usuarios ORDER BY nome').all();
+function colecao() {
+  return obterBanco().collection('usuarios');
 }
 
-function buscarPorId(id) {
-  return banco.prepare('SELECT * FROM usuarios WHERE id = ?').get(id);
+export async function inserir(usuario) {
+  const resultado = await colecao().insertOne(usuario);
+  return resultado.insertedId;
 }
 
-function existe(id) {
-  return Boolean(banco.prepare('SELECT 1 FROM usuarios WHERE id = ?').get(id));
+export async function buscarTodas(filtro = {}) {
+  return colecao().find(filtro).toArray();
 }
 
-function criar({ nome, email }) {
-  const { lastInsertRowid } = banco
-    .prepare('INSERT INTO usuarios (nome, email) VALUES (?, ?)')
-    .run(nome, email);
-  return lastInsertRowid;
+export async function buscarPorId(id) {
+  if (!ObjectId.isValid(id)) return null;
+  return colecao().findOne({ _id: new ObjectId(id) });
 }
 
-function atualizar(id, { nome, email }) {
-  banco.prepare('UPDATE usuarios SET nome = ?, email = ? WHERE id = ?').run(nome, email, id);
+export async function atualizar(id, campos) {
+  if (!ObjectId.isValid(id)) return false;
+  const resultado = await colecao().updateOne({ _id: new ObjectId(id) }, { $set: campos });
+  return resultado.matchedCount > 0;
 }
 
-function remover(id) {
-  banco.prepare('DELETE FROM usuarios WHERE id = ?').run(id);
+export async function remover(id) {
+  if (!ObjectId.isValid(id)) return false;
+  const resultado = await colecao().deleteOne({ _id: new ObjectId(id) });
+  return resultado.deletedCount > 0;
 }
-
-export { listar, buscarPorId, existe, criar, atualizar, remover };

@@ -1,30 +1,32 @@
-import * as banco from '../config/banco.js';
+import { ObjectId } from 'mongodb';
+import { obterBanco } from '../config/banco.js';
 
-function listar() {
-  return banco.prepare('SELECT * FROM categorias ORDER BY nome').all();
+function colecao() {
+  return obterBanco().collection('categorias');
 }
 
-function buscarPorId(id) {
-  return banco.prepare('SELECT * FROM categorias WHERE id = ?').get(id);
+export async function inserir(categoria) {
+  const resultado = await colecao().insertOne(categoria);
+  return resultado.insertedId;
 }
 
-function existe(id) {
-  return Boolean(banco.prepare('SELECT 1 FROM categorias WHERE id = ?').get(id));
+export async function buscarTodas(filtro = {}) {
+  return colecao().find(filtro).toArray();
 }
 
-function criar({ nome, descricao }) {
-  const { lastInsertRowid } = banco
-    .prepare('INSERT INTO categorias (nome, descricao) VALUES (?, ?)')
-    .run(nome, descricao);
-  return lastInsertRowid;
+export async function buscarPorId(id) {
+  if (!ObjectId.isValid(id)) return null;
+  return colecao().findOne({ _id: new ObjectId(id) });
 }
 
-function atualizar(id, { nome, descricao }) {
-  banco.prepare('UPDATE categorias SET nome = ?, descricao = ? WHERE id = ?').run(nome, descricao, id);
+export async function atualizar(id, campos) {
+  if (!ObjectId.isValid(id)) return false;
+  const resultado = await colecao().updateOne({ _id: new ObjectId(id) }, { $set: campos });
+  return resultado.matchedCount > 0;
 }
 
-function remover(id) {
-  banco.prepare('DELETE FROM categorias WHERE id = ?').run(id);
+export async function remover(id) {
+  if (!ObjectId.isValid(id)) return false;
+  const resultado = await colecao().deleteOne({ _id: new ObjectId(id) });
+  return resultado.deletedCount > 0;
 }
-
-export { listar, buscarPorId, existe, criar, atualizar, remover };
