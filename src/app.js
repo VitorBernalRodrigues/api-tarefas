@@ -31,7 +31,7 @@ app.use((erro, req, res, next) => {
   if (erro.type === 'entity.parse.failed') {
     return res.status(400).json({ erro: 'JSON inválido no corpo da requisição.' });
   }
-  if (erro.code === 'ERR_SQLITE_ERROR' && /UNIQUE/.test(erro.message)) {
+  if (erro.code === 11000) {
     return res.status(409).json({ erro: 'Já existe um registro com esse valor único.' });
   }
   console.error(erro);

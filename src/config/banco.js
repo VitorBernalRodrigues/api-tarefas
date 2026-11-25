@@ -17,7 +17,6 @@ export async function conectar() {
   return db;
 }
 
-// Retorna o banco conectado. Os models usam esta função para acessar as coleções.
 export function obterBanco() {
   return db;
 }
