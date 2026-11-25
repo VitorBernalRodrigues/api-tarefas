@@ -1,53 +1,31 @@
-import * as Usuario from '../models/usuarioModel.js';
-import * as Tarefa from '../models/tarefaModel.js';
+import * as usuarioService from '../services/usuarioService.js';
 import * as usuarioView from '../views/usuarioView.js';
-import { naoEncontrado, invalido } from '../utils/erros.js';
-import { textoObrigatorio, idDaRota } from '../utils/validacao.js';
-import { hoje } from '../models/regras.js';
+import { idDaRota } from '../utils/validacao.js';
+import { hoje } from '../services/regras.js';
 
-function buscarUsuario(id) {
-  const usuario = Usuario.buscarPorId(id);
-  if (!usuario) throw naoEncontrado('Usuário');
-  return usuario;
+async function listar(req, res) {
+  res.json(await usuarioService.listar());
 }
 
-function lerDados(corpo) {
-  const nome = textoObrigatorio(corpo.nome, 'nome');
-  const email = textoObrigatorio(corpo.email, 'email').toLowerCase();
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) throw invalido('E-mail inválido.');
-  return { nome, email };
+async function buscar(req, res) {
+  res.json(await usuarioService.buscarPorId(idDaRota(req)));
 }
 
-function listar(req, res) {
-  res.json(Usuario.listar());
+async function criar(req, res) {
+  res.status(201).json(await usuarioService.criar(req.body ?? {}));
 }
 
-function buscar(req, res) {
-  res.json(buscarUsuario(idDaRota(req)));
+async function atualizar(req, res) {
+  res.json(await usuarioService.atualizar(idDaRota(req), req.body ?? {}));
 }
 
-function criar(req, res) {
-  const id = Usuario.criar(lerDados(req.body ?? {}));
-  res.status(201).json(buscarUsuario(id));
-}
-
-function atualizar(req, res) {
-  const id = idDaRota(req);
-  buscarUsuario(id);
-  Usuario.atualizar(id, lerDados(req.body ?? {}));
-  res.json(buscarUsuario(id));
-}
-
-function remover(req, res) {
-  const id = idDaRota(req);
-  buscarUsuario(id);
-  Usuario.remover(id);
+async function remover(req, res) {
+  await usuarioService.remover(idDaRota(req));
   res.status(204).end();
 }
 
-function historico(req, res) {
-  const usuario = buscarUsuario(idDaRota(req));
-  const tarefas = Tarefa.listarPorUsuario(usuario.id);
+async function historico(req, res) {
+  const { usuario, tarefas } = await usuarioService.historico(idDaRota(req));
   res.json(usuarioView.historico(usuario, tarefas, hoje()));
 }
 
