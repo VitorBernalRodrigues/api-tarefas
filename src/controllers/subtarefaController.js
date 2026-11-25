@@ -1,9 +1,10 @@
 import * as subtarefaService from '../services/subtarefaService.js';
+import { lista } from '../utils/resposta.js';
 import * as v from '../utils/validacao.js';
 
 async function listar(req, res) {
   const tarefaId = req.query.tarefa_id ? v.idOpcional(req.query.tarefa_id, 'tarefa_id') : null;
-  res.json(await subtarefaService.listar(tarefaId));
+  res.json(lista(await subtarefaService.listar(tarefaId)));
 }
 
 async function buscar(req, res) {

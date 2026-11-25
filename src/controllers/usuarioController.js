@@ -1,10 +1,11 @@
 import * as usuarioService from '../services/usuarioService.js';
+import { lista } from '../utils/resposta.js';
 import * as usuarioView from '../views/usuarioView.js';
 import { idDaRota } from '../utils/validacao.js';
 import { hoje } from '../services/regras.js';
 
 async function listar(req, res) {
-  res.json(await usuarioService.listar());
+  res.json(lista(await usuarioService.listar()));
 }
 
 async function buscar(req, res) {

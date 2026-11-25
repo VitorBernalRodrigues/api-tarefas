@@ -1,8 +1,9 @@
 import * as categoriaService from '../services/categoriaService.js';
+import { lista } from '../utils/resposta.js';
 import { idDaRota } from '../utils/validacao.js';
 
 async function listar(req, res) {
-  res.json(await categoriaService.listar());
+  res.json(lista(await categoriaService.listar()));
 }
 
 async function buscar(req, res) {

@@ -1,9 +1,10 @@
 import * as tarefaService from '../services/tarefaService.js';
+import { lista } from '../utils/resposta.js';
 import * as tarefaView from '../views/tarefaView.js';
 import { idDaRota } from '../utils/validacao.js';
 
 async function listar(req, res) {
-  res.json(await tarefaService.listar(req.query));
+  res.json(lista(await tarefaService.listar(req.query)));
 }
 
 async function buscar(req, res) {
