@@ -1,36 +1,32 @@
-import * as banco from '../config/banco.js';
+import { ObjectId } from 'mongodb';
+import { obterBanco } from '../config/banco.js';
 
-function listar() {
-  return banco.prepare('SELECT * FROM subtarefas').all();
+function colecao() {
+  return obterBanco().collection('subtarefas');
 }
 
-function listarPorTarefa(tarefaId) {
-  return banco.prepare('SELECT * FROM subtarefas WHERE tarefa_id = ?').all(tarefaId);
+export async function inserir(subtarefa) {
+  const resultado = await colecao().insertOne(subtarefa);
+  return resultado.insertedId;
 }
 
-function buscarPorId(id) {
-  return banco.prepare('SELECT * FROM subtarefas WHERE id = ?').get(id);
+export async function buscarTodas(filtro = {}) {
+  return colecao().find(filtro).toArray();
 }
 
-function criar({ tarefa_id, titulo, concluida }) {
-  const { lastInsertRowid } = banco
-    .prepare('INSERT INTO subtarefas (tarefa_id, titulo, concluida) VALUES (?, ?, ?)')
-    .run(tarefa_id, titulo, concluida);
-  return lastInsertRowid;
+export async function buscarPorId(id) {
+  if (!ObjectId.isValid(id)) return null;
+  return colecao().findOne({ _id: new ObjectId(id) });
 }
 
-function atualizar(id, { tarefa_id, titulo, concluida }) {
-  banco
-    .prepare('UPDATE subtarefas SET tarefa_id = ?, titulo = ?, concluida = ? WHERE id = ?')
-    .run(tarefa_id, titulo, concluida, id);
+export async function atualizar(id, campos) {
+  if (!ObjectId.isValid(id)) return false;
+  const resultado = await colecao().updateOne({ _id: new ObjectId(id) }, { $set: campos });
+  return resultado.matchedCount > 0;
 }
 
-function concluir(id) {
-  banco.prepare('UPDATE subtarefas SET concluida = 1 WHERE id = ?').run(id);
+export async function remover(id) {
+  if (!ObjectId.isValid(id)) return false;
+  const resultado = await colecao().deleteOne({ _id: new ObjectId(id) });
+  return resultado.deletedCount > 0;
 }
-
-function remover(id) {
-  banco.prepare('DELETE FROM subtarefas WHERE id = ?').run(id);
-}
-
-export { listar, listarPorTarefa, buscarPorId, criar, atualizar, concluir, remover };
