@@ -25,7 +25,7 @@ cp .env.example .env
 npm run dev
 ```
 
-O `npm run dev` executa antes o `npm run db:up`, que inicia (ou cria) o container `api-tarefas` com o MongoDB 8 na porta `27017`. A API fica disponível em `http://localhost:3333`.
+O `npm run dev` executa antes o `npm run db:up`, que inicia (ou cria) o container `api-tarefas` com o MongoDB 8 na porta `27017`. A API fica disponível em `http://localhost:3333/api/v1`.
 
 ### Variáveis de ambiente (`.env`)
 
@@ -34,6 +34,7 @@ O `npm run dev` executa antes o `npm run db:up`, que inicia (ou cria) o containe
 | `PORT`            | `3333`                      | Porta da API              |
 | `MONGODB_URI`     | `mongodb://localhost:27017` | Endereço do MongoDB       |
 | `MONGODB_DB_NAME` | `api_tarefas`               | Nome do banco de dados    |
+| `CORS_ORIGIN`     | `http://localhost:5173`     | Origem liberada no CORS   |
 
 ### Scripts
 
@@ -65,7 +66,16 @@ Fluxo de uma requisição: `rotas -> controllers -> services -> models`.
 
 Os ids são `ObjectId` do MongoDB, expostos na API como texto de 24 caracteres (ex.: `"65f1c2a9e4b0a1b2c3d4e5f6"`).
 
+## Formato das respostas
+
+- Todas as rotas ficam sob o prefixo `/api/v1`.
+- Listagens devolvem o envelope `{ "data": [...], "meta": { "total": 0 } }`.
+- Erros devolvem `{ "type": "not_found", "message": "Tarefa não encontrado(a)." }`. Tipos: `validation_error` (400), `invalid_json` (400), `not_found` (404), `route_not_found` (404), `conflict` (409), `business_rule` (422) e `internal_error` (500).
+- CORS liberado para a origem definida em `CORS_ORIGIN` (padrão `http://localhost:5173`, o front-end em Vite).
+
 ## Rotas
+
+Os caminhos abaixo são relativos a `/api/v1`.
 
 ### Usuários
 
